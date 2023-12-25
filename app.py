@@ -57,6 +57,8 @@ def main():
         #     f.write(str(top_20_data))
         #词云
         text = ' '.join(top_20_data['Word'])
+        plt.rcParams['font.sans-serif'] = ['SimHei']  # 指定默认字体为黑体
+        plt.rcParams['axes.unicode_minus'] = False  # 解决保存图像是负号'-'显示为方块的问题
         wordcloud = WordCloud(width=800,
                               height=400,
                               background_color='white').generate(text)
