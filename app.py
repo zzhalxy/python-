@@ -3,9 +3,10 @@ from collections import Counter
 import streamlit as st
 import pandas as pd
 from PIL import Image
+import jieba
 import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
-import jieba
+
 
 
 
