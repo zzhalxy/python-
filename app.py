@@ -1,9 +1,10 @@
 import requests
 from collections import Counter
 import streamlit as st
+import pandas as pd
 from bs4 import BeautifulSoup
 import jieba
-import pandas as pd
+
 import matplotlib.pyplot as plt
 from PIL import Image
 from wordcloud import WordCloud
