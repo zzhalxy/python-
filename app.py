@@ -3,14 +3,10 @@ from collections import Counter
 import streamlit as st
 import pandas as pd
 from PIL import Image
-
 import matplotlib.pyplot as plt
 import jieba
 from bs4 import BeautifulSoup
-
 from wordcloud import WordCloud
-
-
 
 def crawl_data(url):
     # 发送GET请求并获取响应
