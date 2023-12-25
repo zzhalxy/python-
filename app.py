@@ -118,8 +118,8 @@ def main():
         # 散点图
         if '散点图' in selected_graphs:
             plt.figure(figsize=(10, 6))
-            plt.rcParams['font.sans-serif'] = ['SimHei']  # 指定中文字体
-            plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
+            # plt.rcParams['font.sans-serif'] = ['SimHei']  # 指定中文字体
+            # plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
             plt.scatter(top_20_data['Word'], top_20_data['Frequency'], color='#567834')
             plt.xticks(rotation=45)  # 将标签旋转45度
             plt.title('散点图')
