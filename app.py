@@ -1,7 +1,7 @@
 import requests
 from collections import Counter
-import jieba
 import matplotlib.pyplot as plt
+import jieba
 import pandas as pd
 
 import streamlit as st
