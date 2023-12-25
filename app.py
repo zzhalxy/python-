@@ -2,8 +2,9 @@ import requests
 from collections import Counter
 import streamlit as st
 import pandas as pd
-from bs4 import BeautifulSoup
 import jieba
+from bs4 import BeautifulSoup
+
 
 import matplotlib.pyplot as plt
 from PIL import Image
