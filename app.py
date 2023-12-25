@@ -1,5 +1,4 @@
 import requests
-from bs4 import BeautifulSoup
 import streamlit as st
 import pandas as pd
 from collections import Counter
@@ -7,6 +6,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from wordcloud import WordCloud
 import jieba
+from bs4 import BeautifulSoup
 
 def crawl_data(url):
     # 发送GET请求并获取响应
