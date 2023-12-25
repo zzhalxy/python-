@@ -16,7 +16,7 @@ def crawl_data(url):
     # 利用requests对象的get方法，对指定的url发起请求,该方法会返回一个Response对象
     response = requests.get(url, headers=headers)
     # response = requests.get(url)
-    response.encoding = 'utf-8'
+    response.encoding = response.apparent_encoding
     # 确定编码
     encoding = response.encoding if 'charset' in response.headers.get('content-type', '').lower() else None
     # 使用BeautifulSoup解析响应文本
@@ -53,16 +53,14 @@ def main():
         st.write("出现次数最多的词语：")
         top_20_data = df.head(num)
         st.dataframe(top_20_data)
-        # with open('content.txt', 'w', encoding='utf-8') as f:
-        #     f.write(str(top_20_data))
+
         #词云
-        # 生成词云文本
         text = ' '.join(top_20_data['Word'])
-        # 设置字体和负号显示
-        plt.rcParams['font.sans-serif'] = ['SimHei']  # 指定默认字体为黑体
-        plt.rcParams['axes.unicode_minus'] = False  # 解决保存图像是负号'-'显示为方块的问题
-        # 创建词云对象
-        wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
+        wordcloud = WordCloud(width=800,
+                              height=400,
+                              background_color='white',
+                              font_path='仿宋_GB2312.ttf').generate(text)
+        # 显示词云
         # 将词云图像转换为Pillow图像
         wordcloud_image = Image.fromarray(wordcloud.to_array())
         # 使用streamlit显示图像
@@ -118,8 +116,8 @@ def main():
         # 散点图
         if '散点图' in selected_graphs:
             plt.figure(figsize=(10, 6))
-            # plt.rcParams['font.sans-serif'] = ['SimHei']  # 指定中文字体
-            # plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
+            plt.rcParams['font.sans-serif'] = ['SimHei']  # 指定中文字体
+            plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
             plt.scatter(top_20_data['Word'], top_20_data['Frequency'], color='#567834')
             plt.xticks(rotation=45)  # 将标签旋转45度
             plt.title('散点图')
