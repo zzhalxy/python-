@@ -1,10 +1,13 @@
 import requests
 from collections import Counter
+
+import streamlit as st
+
 import matplotlib.pyplot as plt
 import jieba
 import pandas as pd
 
-import streamlit as st
+
 from PIL import Image
 from wordcloud import WordCloud
 
