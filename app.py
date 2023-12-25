@@ -1,11 +1,13 @@
 import requests
+from collections import Counter
 import jieba
 import matplotlib.pyplot as plt
-import streamlit as st
 import pandas as pd
-from collections import Counter
+
+import streamlit as st
 from PIL import Image
 from wordcloud import WordCloud
+
 from bs4 import BeautifulSoup
 
 def crawl_data(url):
