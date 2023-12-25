@@ -2,12 +2,13 @@ import requests
 from collections import Counter
 import streamlit as st
 import pandas as pd
-import jieba
-from bs4 import BeautifulSoup
-
-
 import matplotlib.pyplot as plt
 from PIL import Image
+from bs4 import BeautifulSoup
+import jieba
+
+
+
 from wordcloud import WordCloud
 
 
