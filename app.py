@@ -1,5 +1,5 @@
 import requests
-import bs4 as BeautifulSoup
+from bs4 import BeautifulSoup
 import streamlit as st
 import pandas as pd
 from collections import Counter
