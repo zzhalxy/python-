@@ -56,13 +56,13 @@ def main():
         # with open('content.txt', 'w', encoding='utf-8') as f:
         #     f.write(str(top_20_data))
         #词云
+        # 生成词云文本
         text = ' '.join(top_20_data['Word'])
+        # 设置字体和负号显示
         plt.rcParams['font.sans-serif'] = ['SimHei']  # 指定默认字体为黑体
         plt.rcParams['axes.unicode_minus'] = False  # 解决保存图像是负号'-'显示为方块的问题
-        wordcloud = WordCloud(width=800,
-                              height=400,
-                              background_color='white').generate(text)
-        # 显示词云
+        # 创建词云对象
+        wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
         # 将词云图像转换为Pillow图像
         wordcloud_image = Image.fromarray(wordcloud.to_array())
         # 使用streamlit显示图像
