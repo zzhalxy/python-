@@ -3,13 +3,10 @@ from collections import Counter
 import streamlit as st
 import pandas as pd
 from PIL import Image
-from bs4 import BeautifulSoup
+
 import matplotlib.pyplot as plt
 import jieba
-
-
-
-
+from bs4 import BeautifulSoup
 
 from wordcloud import WordCloud
 
