@@ -16,7 +16,7 @@ def crawl_data(url):
     # 利用requests对象的get方法，对指定的url发起请求,该方法会返回一个Response对象
     response = requests.get(url, headers=headers)
     # response = requests.get(url)
-    response.encoding = response.apparent_encoding
+    response.encoding = 'utf-8'
     # 确定编码
     encoding = response.encoding if 'charset' in response.headers.get('content-type', '').lower() else None
     # 使用BeautifulSoup解析响应文本
