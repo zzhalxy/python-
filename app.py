@@ -59,8 +59,7 @@ def main():
         text = ' '.join(top_20_data['Word'])
         wordcloud = WordCloud(width=800,
                               height=400,
-                              background_color='white',
-                              font_path=r'C:\Users\p\AppData\Local\Microsoft\Windows\Fonts\仿宋_GB2312.ttf').generate(text)
+                              background_color='white').generate(text)
         # 显示词云
         # 将词云图像转换为Pillow图像
         wordcloud_image = Image.fromarray(wordcloud.to_array())
