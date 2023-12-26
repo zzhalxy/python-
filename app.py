@@ -7,6 +7,7 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import jieba
 from bs4 import BeautifulSoup
+from matplotlib.font_manager import FontProperties
 from wordcloud import WordCloud
 import numpy as np
 
@@ -113,7 +114,10 @@ def generate_area_chart(data):
     image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
     return fig, image
 def main():
-    plt.rcParams['font.sans-serif'] = ['SimSun']
+    # 设置中文字体
+    font_path = '仿宋_GB2312.ttf'  # 替换为你的仿宋字体文件路径
+    font_prop = FontProperties(fname=font_path)
+    plt.rcParams['font.sans-serif'] = ['仿宋_GB2312']  # 使得中文可以正常显示
     plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
     # 设置中文字体
     st.set_option('deprecation.showPyplotGlobalUse', False)  # 防止警告信息
@@ -171,6 +175,7 @@ def main():
         graph_options = ['直方图', '扇形图', '折线图', '散点图', '条形图', '面积图']
         selected_graphs = st.sidebar.selectbox('选择图像', graph_options)
         plt.figure(figsize=(10, 6))
+        plt.legend(prop=font_prop)
         # 绘制条形图
         if '条形图' in selected_graphs:
             chart_image = create_bar_chart(top_20_data, '条形图', 'Word', 'Frequency')
