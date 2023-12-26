@@ -52,7 +52,7 @@ def main():
         # 手动重新排序行号
         df = df.reset_index(drop=True)
         # 将结果展示在 Streamlit 应用中
-        num = st.select_slider('请选择你要查询的数据量：', options=[1, 5, 10 , 15, 20, 25, 30])
+        num = st.select_slider('请选择你要查询的数据量：', options=[5, 10 , 15, 20, 25, 30])
         st.write("出现次数最多的词语：")
         top_20_data = df.head(num)
         st.dataframe(top_20_data)
@@ -78,7 +78,7 @@ def main():
         # 绘制柱状图
         if '条形图' in selected_graphs:
             plt.figure(figsize=(10, 6))
-            plt.rcParams['font.sans-serif'] = ['SimHei']  # 指定中文字体
+            # plt.rcParams['font.sans-serif'] = ['SimHei']  # 指定中文字体
             plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
             # 设置横坐标标签的角度
             plt.xticks(rotation=45)  # 将标签旋转45度
