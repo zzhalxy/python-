@@ -76,7 +76,6 @@ def main():
         # 创建复选框，包含7种图形的选项
         graph_options = ['直方图', '扇形图', '折线图', '散点图', '条形图', '面积图']
         selected_graphs = st.sidebar.selectbox('选择图像', graph_options)
-
         # 指定自定义字体文件的路径
         font_path = '仿宋_GB2312.ttf'  # 请替换为实际的路径
         # 加载字体文件
@@ -89,12 +88,11 @@ def main():
 
         if '条形图' in selected_graphs:
             plt.figure(figsize=(10, 6))
-
             # 设置横坐标标签的角度
             plt.xticks(rotation=45)  # 将标签旋转45度
             plt.bar(top_20_data['Word'], top_20_data['Frequency'], color='blue')
             plt.title('直方图')
-            plt.xlabel('Word')
+            plt.xlabel('Word', fontproperties='仿宋_GB2312')
             plt.ylabel('Frequency')
             fig = plt.gcf()  # 获取当前图形对象
             fig.canvas.draw()  # 绘制图形
