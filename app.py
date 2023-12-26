@@ -9,7 +9,7 @@ import jieba
 from bs4 import BeautifulSoup
 from wordcloud import WordCloud
 import numpy as np
-import matplotlib.font_manager
+
 
 def crawl_data(url):
     # 发送GET请求并获取响应
@@ -30,7 +30,94 @@ def crawl_data(url):
     # 获取DIV中的文本内容
     content = soup.get_text()
     return content
+
+def create_bar_chart(data, title, x_label, y_label, rotation=45, color='blue'):
+    plt.figure(figsize=(10, 6))
+    plt.xticks(rotation=rotation)
+    plt.bar(data['Word'], data['Frequency'], color=color)
+    plt.title(title)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    fig = plt.gcf()
+    fig.canvas.draw()
+    image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
+    image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+    return image
+
+def generate_pie_chart(data, num):
+    labels = data['Word']
+    sizes = data['Frequency']
+    colors = ['blue', 'green', 'red', 'purple', 'orange']  # 根据你的数据量调整颜色数量
+    fig, ax = plt.subplots()
+    ax.axis('equal')
+    plt.title('扇形图')
+    dev_position = [0.1] * num
+    plt.pie(sizes,
+            labels=labels,
+            wedgeprops={'width': 0.7},
+            colors=colors,
+            autopct='%1.1f%%',
+            shadow=True,
+            startangle=50,
+            explode=dev_position,
+            labeldistance=1,
+            radius=1.5,
+            pctdistance=0.8)
+    plt.axis('equal')
+    fig.canvas.draw()
+    image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
+    image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+    return image
+
+def generate_scatter_plot(data):
+    plt.scatter(data['Word'], data['Frequency'], color='#567834')
+    plt.xticks(rotation=45)  # 将标签旋转45度
+    plt.title('散点图')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    fig = plt.gcf()  # 获取当前图形对象
+    fig.canvas.draw()  # 绘制图形
+    image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
+    image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+    return image
+
+def generate_line_plot(data):
+    plt.plot(data['Word'], data['Frequency'], color='red')
+    plt.xticks(rotation=45)  # 将标签旋转45度
+    plt.title('折线图')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    fig = plt.gcf()  # 获取当前图形对象
+    fig.canvas.draw()  # 绘制图形
+    image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
+    image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+    return image
+
+def generate_histogram(data):
+    plt.hist(data, bins=max(data), color='red', alpha=0.5)
+    plt.title('直方图')
+    plt.xlabel('频率值')
+    plt.ylabel('该频率数据数')
+    fig = plt.gcf()  # 获取当前图形对象
+    return fig
+
+def generate_area_chart(data):
+    plt.fill_between(data['Word'], data['Frequency'], color='#345678')
+    plt.xticks(rotation=45)
+    plt.title('面积图')
+    plt.xlabel('Word')
+    plt.ylabel('Frequency')
+    fig = plt.gcf()
+    fig.canvas.draw()
+    image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
+    image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+    return fig, image
 def main():
+    plt.rcParams['font.sans-serif'] = ['SimSun']
+    plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
+    # 设置中文字体
+    st.set_option('deprecation.showPyplotGlobalUse', False)  # 防止警告信息
+    font_path = 'SimHei.ttf'  # 替换为系统支持的中文字体文件路径
     # 使用 Streamlit 构建界面
     st.title('中文文本分词与词频统计:sunglasses:')
     # 输入要爬取的网页 URL
@@ -62,9 +149,16 @@ def main():
         #词云
         text = ' '.join(top_20_data['Word'])
         wordcloud = WordCloud(width=800,
-                              height=400,
-                              background_color='white',
-                              font_path='仿宋_GB2312.ttf').generate(text)
+                  height=400,
+                  background_color='white',
+                  font_path=font_path,  # 设置中文字体
+                  colormap='viridis',  # 设置颜色映射
+                  contour_width=1,
+                  contour_color='steelblue',  # 设置轮廓颜色
+                  max_words=100,  # 最大显示词数
+                  max_font_size=80,  # 最大字体大小
+                  random_state=42  # 随机状态，以确保每次生成相同的词云
+                  ).generate(text)
         # 显示词云
         # 将词云图像转换为Pillow图像
         wordcloud_image = Image.fromarray(wordcloud.to_array())
@@ -76,133 +170,41 @@ def main():
         # 创建复选框，包含7种图形的选项
         graph_options = ['直方图', '扇形图', '折线图', '散点图', '条形图', '面积图']
         selected_graphs = st.sidebar.selectbox('选择图像', graph_options)
-        # 指定自定义字体文件的路径
-        font_path = '仿宋_GB2312.ttf'  # 请替换为实际的路径
-        # 加载字体文件
-        font = matplotlib.font_manager.FontProperties(fname=font_path)
-        # 获取字体家族名称
-        font_family = font.get_name()
         plt.figure(figsize=(10, 6))
-        plt.rcParams['font.sans-serif'] = [font_family]
-        plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
-        # 绘制柱状图
-
+        # 绘制条形图
         if '条形图' in selected_graphs:
-
-            # 设置横坐标标签的角度
-            plt.xticks(rotation=45)  # 将标签旋转45度
-            plt.bar(top_20_data['Word'], top_20_data['Frequency'], color='blue')
-            plt.title('条形图')
-            plt.xlabel('Word', fontproperties=font_family)
-            plt.ylabel('Frequency')
-            fig = plt.gcf()  # 获取当前图形对象
-            fig.canvas.draw()  # 绘制图形
-            image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
-            image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
-
-            # 在Streamlit应用中显示图片
-            st.sidebar.image(image, caption='条形图')
+            chart_image = create_bar_chart(top_20_data, '条形图', 'Word', 'Frequency')
+            st.sidebar.image(chart_image, caption='条形图')
 
         # 扇形图
         if '扇形图' in selected_graphs:
-            labels = top_20_data['Word']
-            sizes = top_20_data['Frequency']
-            colors = ['blue', 'green', 'red', 'purple', 'orange']  # 根据你的数据量调整颜色数量
-            fig1, ax1 = plt.subplots()
-
-            # ax1.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
-            ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-            plt.title('扇形图')
-            dev_position = [0.1]*num
-            plt.pie(sizes,
-                    labels=labels,
-                    wedgeprops={'width':0.7},
-                    colors=colors,
-                    autopct='%1.1f%%',
-                    shadow=True,
-                    startangle=50,
-                    explode=dev_position,
-                    labeldistance=1,
-                    radius=1.5,
-                    pctdistance=0.8)
-            plt.axis('equal')
-            # st.pyplot(plt.gcf())
-            fig = plt.gcf()  # 获取当前图形对象
-            fig.canvas.draw()  # 绘制图形
-            image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
-            image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
-
-            # 在Streamlit应用中显示图片
-            st.sidebar.image(image, caption='扇形图')
+            pie_chart_image = generate_pie_chart(top_20_data, num=len(top_20_data))
+            # 在Streamlit侧边栏显示图片
+            st.sidebar.image(pie_chart_image, caption='扇形图')
 
         # 散点图
         if '散点图' in selected_graphs:
-
-
-            plt.scatter(top_20_data['Word'], top_20_data['Frequency'], color='#567834')
-            plt.xticks(rotation=45)  # 将标签旋转45度
-            plt.title('散点图')
-            plt.xlabel('x')
-            plt.ylabel('y')
-            fig = plt.gcf()  # 获取当前图形对象
-            fig.canvas.draw()  # 绘制图形
-            image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
-            image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
-
+            scatter_plot_image = generate_scatter_plot(top_20_data)
             # 在Streamlit应用中显示图片
-            st.sidebar.image(image, caption='散点图')
+            st.sidebar.image(scatter_plot_image, caption='散点图')
 
         # 绘制折线图
         if '折线图' in selected_graphs:
-
-
-            plt.plot(top_20_data['Word'], top_20_data['Frequency'], color='red')
-            plt.xticks(rotation=45)  # 将标签旋转45度
-            plt.title('折线图')
-            plt.xlabel('x')
-            plt.ylabel('y')
-
-            # 将折线图保存为图片
-            fig = plt.gcf()  # 获取当前图形对象
-            fig.canvas.draw()  # 绘制图形
-            image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
-            image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
-
-            # 在Streamlit应用中显示图片
-            st.sidebar.image(image, caption='折线图')
+            line_plot_image = generate_line_plot(top_20_data)
+            # 在Streamlit侧边栏显示图片
+            st.sidebar.image(line_plot_image, caption='折线图')
 
         #条形图
         if '直方图' in selected_graphs:
-
-
-            # 示例数据
-            data = top_20_data['Frequency']
-            # 绘制直方图
-            plt.hist(data, bins=max(top_20_data['Frequency']), color='red', alpha=0.5)
-            # 设置标题和标签
-            plt.title('直方图')
-            plt.xlabel('频率值')
-            plt.ylabel('该频率数据数')
-            # 显示直方图
-            st.sidebar.pyplot(plt.gcf())
-
+            histogram_fig = generate_histogram(top_20_data['Frequency'])
+            # 在Streamlit侧边栏显示直方图
+            st.sidebar.pyplot(histogram_fig)
 
         #面积图
         if '面积图' in selected_graphs:
-
-
-            plt.fill_between(top_20_data['Word'], top_20_data['Frequency'], color='#345678')
-            plt.xticks(rotation=45)  # 将标签旋转45度
-            plt.title('面积图')
-            plt.xlabel('Word')
-            plt.ylabel('Frequency')
-            fig = plt.gcf()  # 获取当前图形对象
-            fig.canvas.draw()  # 绘制图形
-            image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
-            image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
-
-            # 在Streamlit应用中显示图片
-            st.sidebar.image(image, caption='面积图')
+            area_fig, area_image = generate_area_chart(top_20_data)
+            # 在Streamlit应用的侧边栏中显示面积图
+            st.sidebar.image(area_image, caption='面积图')
 
     else:
         error = '请输入正确的url'
