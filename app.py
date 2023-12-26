@@ -17,11 +17,12 @@ def crawl_data(url):
     # 利用requests对象的get方法，对指定的url发起请求,该方法会返回一个Response对象
     response = requests.get(url, headers=headers)
     # response = requests.get(url)
-    response.encoding = response.apparent_encoding
+    # response.encoding = response.apparent_encoding
+    response.encoding = 'utf-8'
     # 确定编码
-    encoding = response.encoding if 'charset' in response.headers.get('content-type', '').lower() else None
+    # encoding = response.encoding if 'charset' in response.headers.get('content-type', '').lower() else None
     # 使用BeautifulSoup解析响应文本
-    soup = BeautifulSoup(response.content, 'html.parser', from_encoding=encoding)
+    soup = BeautifulSoup(response.content, 'html.parser', from_encoding='utf-8')
     # 查找ID为"UCAP-CONTENT"的DIV
     # div = soup.find('div', {'id': 'UCAP-CONTENT'})
     # 获取DIV中的文本内容
