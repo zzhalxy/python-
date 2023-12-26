@@ -9,7 +9,7 @@ import jieba
 from bs4 import BeautifulSoup
 from wordcloud import WordCloud
 import numpy as np
-import matplotlib.font_manager 
+import matplotlib.font_manager
 
 def crawl_data(url):
     # 发送GET请求并获取响应
@@ -83,11 +83,13 @@ def main():
         font = matplotlib.font_manager.FontProperties(fname=font_path)
         # 获取字体家族名称
         font_family = font.get_name()
+        plt.rcParams['font.sans-serif'] = [font_family]
+        plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
         # 绘制柱状图
+
         if '条形图' in selected_graphs:
             plt.figure(figsize=(10, 6))
-            plt.rcParams['font.sans-serif'] = [font_family]  # 指定中文字体
-            plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
+
             # 设置横坐标标签的角度
             plt.xticks(rotation=45)  # 将标签旋转45度
             plt.bar(top_20_data['Word'], top_20_data['Frequency'], color='blue')
@@ -108,8 +110,7 @@ def main():
             sizes = top_20_data['Frequency']
             colors = ['blue', 'green', 'red', 'purple', 'orange']  # 根据你的数据量调整颜色数量
             fig1, ax1 = plt.subplots()
-            plt.rcParams['font.sans-serif'] = [font_family]  # 指定中文字体
-            plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
+
             # ax1.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
             ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
             plt.title('扇形图')
@@ -138,8 +139,7 @@ def main():
         # 散点图
         if '散点图' in selected_graphs:
             plt.figure(figsize=(10, 6))
-            plt.rcParams['font.sans-serif'] = [font_family]  # 指定中文字体
-            plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
+
             plt.scatter(top_20_data['Word'], top_20_data['Frequency'], color='#567834')
             plt.xticks(rotation=45)  # 将标签旋转45度
             plt.title('散点图')
@@ -156,8 +156,7 @@ def main():
         # 绘制折线图
         if '折线图' in selected_graphs:
             plt.figure(figsize=(10, 6))
-            plt.rcParams['font.sans-serif'] = [font_family]  # 指定中文字体
-            plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
+
             plt.plot(top_20_data['Word'], top_20_data['Frequency'], color='red')
             plt.xticks(rotation=45)  # 将标签旋转45度
             plt.title('折线图')
@@ -176,8 +175,7 @@ def main():
         #条形图
         if '直方图' in selected_graphs:
             plt.figure(figsize=(10, 6))
-            plt.rcParams['font.sans-serif'] = [font_family]  # 指定中文字体
-            plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
+
             # 示例数据
             data = top_20_data['Frequency']
             # 绘制直方图
@@ -193,8 +191,7 @@ def main():
         #面积图
         if '面积图' in selected_graphs:
             plt.figure(figsize=(10, 6))
-            plt.rcParams['font.sans-serif'] = [font_family]  # 指定中文字体
-            plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
+
             plt.fill_between(top_20_data['Word'], top_20_data['Frequency'], color='#345678')
             plt.xticks(rotation=45)  # 将标签旋转45度
             plt.title('面积图')
