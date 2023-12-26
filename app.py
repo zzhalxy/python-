@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import jieba
 from bs4 import BeautifulSoup
 from wordcloud import WordCloud
+import numpy as np
 
 def crawl_data(url):
     # 发送GET请求并获取响应
@@ -83,10 +84,13 @@ def main():
             plt.title('直方图')
             plt.xlabel('Word')
             plt.ylabel('Frequency')
-            # 将图形对象直接传递给 st.pyplot()
-            # st.pyplot(plt.gcf())  # 'gcf' 代表 get current figure
-            # 将图形放入侧边栏
-            st.sidebar.pyplot(plt.gcf())
+            fig = plt.gcf()  # 获取当前图形对象
+            fig.canvas.draw()  # 绘制图形
+            image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
+            image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+
+            # 在Streamlit应用中显示图片
+            st.sidebar.image(image, caption='条形图')
 
         # 扇形图
         if '扇形图' in selected_graphs:
@@ -111,7 +115,13 @@ def main():
                     pctdistance=0.8)
             plt.axis('equal')
             # st.pyplot(plt.gcf())
-            st.sidebar.pyplot(plt.gcf())
+            fig = plt.gcf()  # 获取当前图形对象
+            fig.canvas.draw()  # 绘制图形
+            image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
+            image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+
+            # 在Streamlit应用中显示图片
+            st.sidebar.image(image, caption='扇形图')
 
         # 散点图
         if '散点图' in selected_graphs:
@@ -123,7 +133,13 @@ def main():
             plt.title('散点图')
             plt.xlabel('x')
             plt.ylabel('y')
-            st.sidebar.pyplot(plt.gcf())
+            fig = plt.gcf()  # 获取当前图形对象
+            fig.canvas.draw()  # 绘制图形
+            image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
+            image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+
+            # 在Streamlit应用中显示图片
+            st.sidebar.image(image, caption='散点图')
 
         # 绘制折线图
         if '折线图' in selected_graphs:
@@ -135,7 +151,15 @@ def main():
             plt.title('折线图')
             plt.xlabel('x')
             plt.ylabel('y')
-            st.sidebar.pyplot(plt.gcf())
+
+            # 将折线图保存为图片
+            fig = plt.gcf()  # 获取当前图形对象
+            fig.canvas.draw()  # 绘制图形
+            image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
+            image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+
+            # 在Streamlit应用中显示图片
+            st.sidebar.image(image, caption='折线图')
 
         #条形图
         if '直方图' in selected_graphs:
@@ -164,7 +188,13 @@ def main():
             plt.title('面积图')
             plt.xlabel('Word')
             plt.ylabel('Frequency')
-            st.sidebar.pyplot(plt.gcf())
+            fig = plt.gcf()  # 获取当前图形对象
+            fig.canvas.draw()  # 绘制图形
+            image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
+            image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+
+            # 在Streamlit应用中显示图片
+            st.sidebar.image(image, caption='面积图')
 
     else:
         error = '请输入正确的url'
