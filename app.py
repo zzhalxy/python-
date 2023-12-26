@@ -117,7 +117,7 @@ def main():
     plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
     # 设置中文字体
     st.set_option('deprecation.showPyplotGlobalUse', False)  # 防止警告信息
-    font_path = 'SimHei.ttf'  # 替换为系统支持的中文字体文件路径
+    # font_path = 'SimHei.ttf'  # 替换为系统支持的中文字体文件路径
     # 使用 Streamlit 构建界面
     st.title('中文文本分词与词频统计:sunglasses:')
     # 输入要爬取的网页 URL
@@ -151,7 +151,7 @@ def main():
         wordcloud = WordCloud(width=800,
                   height=400,
                   background_color='white',
-                  font_path=font_path,  # 设置中文字体
+                  font_path='仿宋_GB2312.ttf',  # 设置中文字体
                   colormap='viridis',  # 设置颜色映射
                   contour_width=1,
                   contour_color='steelblue',  # 设置轮廓颜色
