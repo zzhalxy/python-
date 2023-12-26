@@ -144,7 +144,7 @@ def create_bar_chart(data, title, x_label, y_label, rotation=45, color='blue', f
 
     # Use the following lines to create a legend with specified font properties
     if font_prop is not None:
-        plt.legend(['Frequency'], prop=font_prop)
+        plt.legend(data['Word'], prop=font_prop)
 
     fig = plt.gcf()
     fig.canvas.draw()
