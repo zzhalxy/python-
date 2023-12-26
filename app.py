@@ -99,7 +99,7 @@ def main():
 
         #条形图
         if '直方图' in selected_graphs:
-            histogram_fig = generate_histogram(top_20_data['Frequency'], font_prop=font_prop)
+            histogram_fig = generate_histogram(top_20_data['Frequency'])
             # 在Streamlit侧边栏显示直方图
             st.sidebar.pyplot(histogram_fig)
 
@@ -139,7 +139,7 @@ def create_bar_chart(data, title, x_label, y_label, rotation=45, color='blue', f
     plt.title(title)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
-    plt.legend(prop=font_prop)  # 确保在图例中也使用指定的字体
+    plt.legend(['Word'], prop=font_prop)  # 确保在图例中也使用指定的字体
     fig = plt.gcf()
     fig.canvas.draw()
     image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
@@ -166,7 +166,7 @@ def generate_pie_chart(data, num,font_prop=None):
             radius=1.5,
             pctdistance=0.8)
     plt.axis('equal')
-    plt.legend(prop=font_prop)
+    plt.legend(['Word'], prop=font_prop)
     fig.canvas.draw()
     image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
     image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
@@ -178,7 +178,7 @@ def generate_scatter_plot(data,font_prop=None):
     plt.title('散点图')
     plt.xlabel('x')
     plt.ylabel('y')
-    plt.legend(prop=font_prop)
+    plt.legend(['Word'], prop=font_prop)
     fig = plt.gcf()  # 获取当前图形对象
     fig.canvas.draw()  # 绘制图形
     image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
@@ -191,19 +191,20 @@ def generate_line_plot(data,font_prop=None):
     plt.title('折线图')
     plt.xlabel('x')
     plt.ylabel('y')
-    plt.legend(prop=font_prop)
+    # 创建图例并设置字体属性
+    plt.legend(['Word'], prop=font_prop)
+
     fig = plt.gcf()  # 获取当前图形对象
     fig.canvas.draw()  # 绘制图形
     image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
     image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
     return image
 
-def generate_histogram(data,font_prop=None):
+def generate_histogram(data):
     plt.hist(data, bins=max(data), color='red', alpha=0.5)
     plt.title('直方图')
     plt.xlabel('频率值')
     plt.ylabel('该频率数据数')
-    plt.legend(prop=font_prop)
     fig = plt.gcf()  # 获取当前图形对象
     return fig
 
@@ -213,7 +214,7 @@ def generate_area_chart(data,font_prop=None):
     plt.title('面积图')
     plt.xlabel('Word')
     plt.ylabel('Frequency')
-    plt.legend(prop=font_prop)
+    plt.legend(['Word'], prop=font_prop)
     fig = plt.gcf()
     fig.canvas.draw()
     image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
