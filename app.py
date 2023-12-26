@@ -94,7 +94,7 @@ def main():
 
         # 扇形图
         if '扇形图' in selected_graphs:
-            labels = top_20_data['Word']
+            labels = top_20_data['Word'].apply(lambda x: x.encode('utf-8'))
             sizes = top_20_data['Frequency']
             colors = ['blue', 'green', 'red', 'purple', 'orange']  # 根据你的数据量调整颜色数量
             fig1, ax1 = plt.subplots()
