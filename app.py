@@ -82,12 +82,13 @@ def main():
         font = matplotlib.font_manager.FontProperties(fname=font_path)
         # 获取字体家族名称
         font_family = font.get_name()
+        plt.figure(figsize=(10, 6))
         plt.rcParams['font.sans-serif'] = [font_family]
         plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
         # 绘制柱状图
 
         if '条形图' in selected_graphs:
-            plt.figure(figsize=(10, 6))
+
             # 设置横坐标标签的角度
             plt.xticks(rotation=45)  # 将标签旋转45度
             plt.bar(top_20_data['Word'], top_20_data['Frequency'], color='blue')
@@ -136,7 +137,7 @@ def main():
 
         # 散点图
         if '散点图' in selected_graphs:
-            plt.figure(figsize=(10, 6))
+
 
             plt.scatter(top_20_data['Word'], top_20_data['Frequency'], color='#567834')
             plt.xticks(rotation=45)  # 将标签旋转45度
@@ -153,7 +154,7 @@ def main():
 
         # 绘制折线图
         if '折线图' in selected_graphs:
-            plt.figure(figsize=(10, 6))
+
 
             plt.plot(top_20_data['Word'], top_20_data['Frequency'], color='red')
             plt.xticks(rotation=45)  # 将标签旋转45度
@@ -172,7 +173,7 @@ def main():
 
         #条形图
         if '直方图' in selected_graphs:
-            plt.figure(figsize=(10, 6))
+
 
             # 示例数据
             data = top_20_data['Frequency']
@@ -188,7 +189,7 @@ def main():
 
         #面积图
         if '面积图' in selected_graphs:
-            plt.figure(figsize=(10, 6))
+
 
             plt.fill_between(top_20_data['Word'], top_20_data['Frequency'], color='#345678')
             plt.xticks(rotation=45)  # 将标签旋转45度
