@@ -13,12 +13,12 @@ import numpy as np
 
 def main():
     # 设置中文字体
-    font_path = '仿宋_GB2312.ttf'  # 替换为你的仿宋字体文件路径
-    font_prop = FontProperties(fname=font_path)
+    # font_path = '仿宋_GB2312.ttf'  # 替换为你的仿宋字体文件路径
+    # font_prop = FontProperties(fname=font_path)
     plt.rcParams['font.sans-serif'] = ['仿宋_GB2312']  # 使得中文可以正常显示
     plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
     # 设置中文字体
-    st.set_option('deprecation.showPyplotGlobalUse', False)  # 防止警告信息
+    # st.set_option('deprecation.showPyplotGlobalUse', False)  # 防止警告信息
     # font_path = 'SimHei.ttf'  # 替换为系统支持的中文字体文件路径
     # 使用 Streamlit 构建界面
     st.title('中文文本分词与词频统计:sunglasses:')
@@ -76,24 +76,24 @@ def main():
 
         # 绘制条形图
         if '条形图' in selected_graphs:
-            chart_image = create_bar_chart(top_20_data, '条形图', 'Word', 'Frequency', font_prop=font_prop)
+            chart_image = create_bar_chart(top_20_data, '条形图', 'Word', 'Frequency')
             st.sidebar.image(chart_image, caption='条形图')
 
         # 扇形图
         if '扇形图' in selected_graphs:
-            pie_chart_image = generate_pie_chart(top_20_data, num=len(top_20_data), font_prop=font_prop)
+            pie_chart_image = generate_pie_chart(top_20_data, num=len(top_20_data))
             # 在Streamlit侧边栏显示图片
             st.sidebar.image(pie_chart_image, caption='扇形图')
 
         # 散点图
         if '散点图' in selected_graphs:
-            scatter_plot_image = generate_scatter_plot(top_20_data, font_prop=font_prop)
+            scatter_plot_image = generate_scatter_plot(top_20_data)
             # 在Streamlit应用中显示图片
             st.sidebar.image(scatter_plot_image, caption='散点图')
 
         # 绘制折线图
         if '折线图' in selected_graphs:
-            line_plot_image = generate_line_plot(top_20_data, font_prop=font_prop)
+            line_plot_image = generate_line_plot(top_20_data)
             # 在Streamlit侧边栏显示图片
             st.sidebar.image(line_plot_image, caption='折线图')
 
@@ -105,7 +105,7 @@ def main():
 
         #面积图
         if '面积图' in selected_graphs:
-            area_fig, area_image = generate_area_chart(top_20_data, font_prop=font_prop)
+            area_fig, area_image = generate_area_chart(top_20_data)
             # 在Streamlit应用的侧边栏中显示面积图
             st.sidebar.image(area_image, caption='面积图')
 
@@ -132,20 +132,12 @@ def crawl_data(url):
     content = soup.get_text()
     return content
 
-def create_bar_chart(data, title, x_label, y_label, rotation=45, color='blue', font_prop=None):
+def create_bar_chart(data, title, x_label, y_label, rotation=45, color='blue'):
     plt.xticks(rotation=rotation)
     plt.bar(data['Word'], data['Frequency'], color=color)
     plt.title(title)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
-
-    # Remove the following line
-    # plt.legend(data['Word'], prop=font_prop)
-
-    # Use the following lines to create a legend with specified font properties
-    if font_prop is not None:
-        plt.legend(data['Word'], prop=font_prop)
-
     fig = plt.gcf()
     fig.canvas.draw()
     image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
@@ -172,7 +164,6 @@ def generate_pie_chart(data, num,font_prop=None):
             radius=1.5,
             pctdistance=0.8)
     plt.axis('equal')
-    plt.legend(labels, prop=font_prop)
     fig.canvas.draw()
     image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
     image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
@@ -184,7 +175,6 @@ def generate_scatter_plot(data,font_prop=None):
     plt.title('散点图')
     plt.xlabel('x')
     plt.ylabel('y')
-    plt.legend(data['Word'], prop=font_prop)
     fig = plt.gcf()  # 获取当前图形对象
     fig.canvas.draw()  # 绘制图形
     image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
@@ -197,8 +187,6 @@ def generate_line_plot(data,font_prop=None):
     plt.title('折线图')
     plt.xlabel('x')
     plt.ylabel('y')
-    # 创建图例并设置字体属性
-    plt.legend(data['Word'], prop=font_prop)
 
     fig = plt.gcf()  # 获取当前图形对象
     fig.canvas.draw()  # 绘制图形
@@ -212,7 +200,6 @@ def generate_area_chart(data,font_prop=None):
     plt.title('面积图')
     plt.xlabel('Word')
     plt.ylabel('Frequency')
-    plt.legend(data['Word'], prop=font_prop)
     fig = plt.gcf()
     fig.canvas.draw()
     image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
