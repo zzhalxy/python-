@@ -9,6 +9,7 @@ import jieba
 from bs4 import BeautifulSoup
 from wordcloud import WordCloud
 import numpy as np
+import matplotlib.font_manager 
 
 def crawl_data(url):
     # 发送GET请求并获取响应
@@ -75,12 +76,11 @@ def main():
         # 创建复选框，包含7种图形的选项
         graph_options = ['直方图', '扇形图', '折线图', '散点图', '条形图', '面积图']
         selected_graphs = st.sidebar.selectbox('选择图像', graph_options)
+
         # 指定自定义字体文件的路径
         font_path = '仿宋_GB2312.ttf'  # 请替换为实际的路径
-
         # 加载字体文件
         font = matplotlib.font_manager.FontProperties(fname=font_path)
-
         # 获取字体家族名称
         font_family = font.get_name()
         # 绘制柱状图
