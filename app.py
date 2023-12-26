@@ -92,7 +92,7 @@ def main():
             plt.xticks(rotation=45)  # 将标签旋转45度
             plt.bar(top_20_data['Word'], top_20_data['Frequency'], color='blue')
             plt.title('条形图')
-            plt.xlabel('Word', fontproperties='仿宋_GB2312.ttf')
+            plt.xlabel('Word', fontproperties=font_family)
             plt.ylabel('Frequency')
             fig = plt.gcf()  # 获取当前图形对象
             fig.canvas.draw()  # 绘制图形
