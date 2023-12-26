@@ -62,7 +62,7 @@ def main():
         wordcloud = WordCloud(width=800,
                               height=400,
                               background_color='white',
-                              font_path='simhei.ttf').generate(text)
+                              font_path='仿宋_GB2312.ttf').generate(text)
         # 显示词云
         # 将词云图像转换为Pillow图像
         wordcloud_image = Image.fromarray(wordcloud.to_array())
@@ -78,7 +78,7 @@ def main():
         # 绘制柱状图
         if '条形图' in selected_graphs:
             plt.figure(figsize=(10, 6))
-            plt.rcParams['font.sans-serif'] = ['simhei']  # 指定中文字体
+            plt.rcParams['font.sans-serif'] = ['仿宋_GB2312']  # 指定中文字体
             plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
             # 设置横坐标标签的角度
             plt.xticks(rotation=45)  # 将标签旋转45度
@@ -100,7 +100,7 @@ def main():
             sizes = top_20_data['Frequency']
             colors = ['blue', 'green', 'red', 'purple', 'orange']  # 根据你的数据量调整颜色数量
             fig1, ax1 = plt.subplots()
-            plt.rcParams['font.sans-serif'] = ['simhei']  # 指定中文字体
+            plt.rcParams['font.sans-serif'] = ['仿宋_GB2312']  # 指定中文字体
             plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
             # ax1.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
             ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
@@ -130,7 +130,7 @@ def main():
         # 散点图
         if '散点图' in selected_graphs:
             plt.figure(figsize=(10, 6))
-            plt.rcParams['font.sans-serif'] = ['simhei']  # 指定中文字体
+            plt.rcParams['font.sans-serif'] = ['仿宋_GB2312']  # 指定中文字体
             plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
             plt.scatter(top_20_data['Word'], top_20_data['Frequency'], color='#567834')
             plt.xticks(rotation=45)  # 将标签旋转45度
@@ -148,7 +148,7 @@ def main():
         # 绘制折线图
         if '折线图' in selected_graphs:
             plt.figure(figsize=(10, 6))
-            plt.rcParams['font.sans-serif'] = ['simhei']  # 指定中文字体
+            plt.rcParams['font.sans-serif'] = ['仿宋_GB2312']  # 指定中文字体
             plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
             plt.plot(top_20_data['Word'], top_20_data['Frequency'], color='red')
             plt.xticks(rotation=45)  # 将标签旋转45度
@@ -168,7 +168,7 @@ def main():
         #条形图
         if '直方图' in selected_graphs:
             plt.figure(figsize=(10, 6))
-            plt.rcParams['font.sans-serif'] = ['simhei']  # 指定中文字体
+            plt.rcParams['font.sans-serif'] = ['仿宋_GB2312']  # 指定中文字体
             plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
             # 示例数据
             data = top_20_data['Frequency']
@@ -185,7 +185,7 @@ def main():
         #面积图
         if '面积图' in selected_graphs:
             plt.figure(figsize=(10, 6))
-            plt.rcParams['font.sans-serif'] = ['simhei']  # 指定中文字体
+            plt.rcParams['font.sans-serif'] = ['仿宋_GB2312']  # 指定中文字体
             plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
             plt.fill_between(top_20_data['Word'], top_20_data['Frequency'], color='#345678')
             plt.xticks(rotation=45)  # 将标签旋转45度
