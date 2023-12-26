@@ -78,7 +78,7 @@ def main():
         # 绘制柱状图
         if '条形图' in selected_graphs:
             plt.figure(figsize=(10, 6))
-            # plt.rcParams['font.sans-serif'] = ['SimHei']  # 指定中文字体
+            plt.rcParams['font.sans-serif'] = ['SimHei']  # 指定中文字体
             plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
             # 设置横坐标标签的角度
             plt.xticks(rotation=45)  # 将标签旋转45度
@@ -100,6 +100,8 @@ def main():
             sizes = top_20_data['Frequency']
             colors = ['blue', 'green', 'red', 'purple', 'orange']  # 根据你的数据量调整颜色数量
             fig1, ax1 = plt.subplots()
+            plt.rcParams['font.sans-serif'] = ['SimHei']  # 指定中文字体
+            plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
             # ax1.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
             ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
             plt.title('扇形图')
