@@ -35,8 +35,9 @@ def main():
     # 执行爬虫逻辑并获取数据
     if url != '':
         data = crawl_data(url)
+        data_utf8 = data.encode('utf-8')  # 如果data已经是字符串，这一步不是必需的
         # 对内容进行分词
-        words =  jieba.lcut_for_search(data)
+        words =  jieba.lcut_for_search(data_utf8)
         # st.text(words)
         # 计算词语频率
         word_counts = Counter(words)
@@ -94,7 +95,7 @@ def main():
 
         # 扇形图
         if '扇形图' in selected_graphs:
-            labels = top_20_data['Word'].apply(lambda x: x.encode('utf-8'))
+            labels = top_20_data['Word']
             sizes = top_20_data['Frequency']
             colors = ['blue', 'green', 'red', 'purple', 'orange']  # 根据你的数据量调整颜色数量
             fig1, ax1 = plt.subplots()
