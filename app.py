@@ -133,13 +133,19 @@ def crawl_data(url):
     return content
 
 def create_bar_chart(data, title, x_label, y_label, rotation=45, color='blue', font_prop=None):
-    plt.figure(figsize=(10, 6))
     plt.xticks(rotation=rotation)
     plt.bar(data['Word'], data['Frequency'], color=color)
     plt.title(title)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
-    plt.legend(data['Word'], prop=font_prop)  # 确保在图例中也使用指定的字体
+
+    # Remove the following line
+    # plt.legend(data['Word'], prop=font_prop)
+
+    # Use the following lines to create a legend with specified font properties
+    if font_prop is not None:
+        plt.legend(['Frequency'], prop=font_prop)
+
     fig = plt.gcf()
     fig.canvas.draw()
     image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
@@ -200,14 +206,6 @@ def generate_line_plot(data,font_prop=None):
     image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
     return image
 
-def generate_histogram(data):
-    plt.hist(data, bins=max(data), color='red', alpha=0.5)
-    plt.title('直方图')
-    plt.xlabel('频率值')
-    plt.ylabel('该频率数据数')
-    fig = plt.gcf()  # 获取当前图形对象
-    return fig
-
 def generate_area_chart(data,font_prop=None):
     plt.fill_between(data['Word'], data['Frequency'], color='#345678')
     plt.xticks(rotation=45)
@@ -221,6 +219,14 @@ def generate_area_chart(data,font_prop=None):
     image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
     return fig, image
 
+
+def generate_histogram(data):
+    plt.hist(data, bins=max(data), color='red', alpha=0.5)
+    plt.title('直方图')
+    plt.xlabel('频率值')
+    plt.ylabel('该频率数据数')
+    fig = plt.gcf()  # 获取当前图形对象
+    return fig
 
 if __name__ == "__main__":
     main()
