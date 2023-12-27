@@ -7,12 +7,7 @@ import matplotlib.pyplot as plt
 import jieba
 from bs4 import BeautifulSoup
 from wordcloud import WordCloud
-from pyecharts.charts import Bar, Line, Scatter
-from pyecharts import options as opts
-from pyecharts.render import make_snapshot
 from PIL import Image
-from pyecharts.charts import Pie
-from snapshot_selenium import snapshot as driver
 import plotly.graph_objects as go
 # 设置仿宋字体路径（替换为你本地的仿宋字体路径）
 font_path = '仿宋_GB2312.ttf'
