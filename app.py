@@ -101,14 +101,12 @@ def main():
                 text=top_20_data['Word'],  # 鼠标悬停时显示的文本
                 name='Top 20 Data'  # 图例名称
             ))
-
             # 更新布局
             chart.update_layout(
                 title="散点图",
                 xaxis=dict(title="Word"),
                 yaxis=dict(title="Frequency")
             )
-
         elif '面积图' in selected_graphs:
             chart = go.Figure()
             chart.add_trace(
@@ -118,32 +116,22 @@ def main():
                 xaxis=dict(title="Word"),
                 yaxis=dict(title="Frequency")
             )
-
-
         elif '瀑布图' in selected_graphs:
             # 获取 top_20_data['Word'] 数据
             words = top_20_data['Word']
-
             # 为每个词生成随机颜色
             marker_colors = [generate_random_color() for _ in words]
-
             # 计算瀑布图的累计值
             cumulative_y = [sum(top_20_data['Frequency'][:i + 1]) for i in range(len(top_20_data['Frequency']))]
-
             # 创建瀑布图，并使用随机颜色
             chart = go.Figure(go.Bar(x=top_20_data['Word'], y=cumulative_y, marker_color=marker_colors))
-
             # 更新布局
             chart.update_layout(title='Waterfall Chart', xaxis_title='Word', yaxis_title='Cumulative Frequency')
-
             # 显示图表
-
-
         # 扇形图
-        if '扇形图' in selected_graphs:
+        elif '扇形图' in selected_graphs:
             # 创建扇形图
             chart = go.Figure()
-
             # 添加扇形图数据
             chart.add_trace(go.Pie(
                 labels=top_20_data['Word'],  # 扇形图标签
@@ -152,14 +140,11 @@ def main():
                 pull=[0.1]*num,  # 通过调整这个参数，可以突出某个扇形
                 textinfo='label+percent',  # 鼠标悬停时显示的信息，这里显示标签和百分比
             ))
-
             # 更新布局
             chart.update_layout(
                 title="扇形图"
             )
-
-
-        if '直方图' in selected_graphs:
+        elif '直方图' in selected_graphs:
             chart = generate_histogram(top_20_data['Frequency'])
             # 在Streamlit侧边栏显示直方图
 
