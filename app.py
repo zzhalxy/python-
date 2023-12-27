@@ -1,25 +1,23 @@
-import matplotlib
 import requests
 from collections import Counter
 import streamlit as st
 import pandas as pd
-from PIL import Image
 import matplotlib.pyplot as plt
 import jieba
 from bs4 import BeautifulSoup
-from matplotlib.font_manager import FontProperties
 from wordcloud import WordCloud
+from pyecharts import options as opts
+from pyecharts.charts import Bar
+from pyecharts.render import make_snapshot
+from snapshot_selenium import snapshot
 import numpy as np
+from PIL import Image
+from pyecharts.charts import Pie
+from snapshot_selenium import snapshot as driver
+from pyecharts.charts import Scatter
+from pyecharts.charts import Line
 
 def main():
-    # 设置中文字体
-    # font_path = '仿宋_GB2312.ttf'  # 替换为你的仿宋字体文件路径
-    # font_prop = FontProperties(fname=font_path)
-    plt.rcParams['font.sans-serif'] = ['仿宋_GB2312']  # 使得中文可以正常显示
-    plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
-    # 设置中文字体
-    # st.set_option('deprecation.showPyplotGlobalUse', False)  # 防止警告信息
-    # font_path = 'SimHei.ttf'  # 替换为系统支持的中文字体文件路径
     # 使用 Streamlit 构建界面
     st.title('中文文本分词与词频统计:sunglasses:')
     # 输入要爬取的网页 URL
@@ -132,79 +130,120 @@ def crawl_data(url):
     content = soup.get_text()
     return content
 
-def create_bar_chart(data, title, x_label, y_label, rotation=45, color='blue'):
-    plt.xticks(rotation=rotation)
-    plt.bar(data['Word'], data['Frequency'], color=color)
-    plt.title(title)
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
-    fig = plt.gcf()
-    fig.canvas.draw()
-    image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
-    image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+def create_bar_chart_pyecharts(data, title, x_label, y_label, rotation=45, color='blue'):
+    # 创建 Pyecharts 的 Bar 图
+    bar_chart = (
+        Bar()
+        .add_xaxis(data['Word'].tolist())
+        .add_yaxis("", data['Frequency'].tolist(), color=color)
+        .set_global_opts(
+            title_opts=opts.TitleOpts(title=title),
+            xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=rotation)),
+            yaxis_opts=opts.AxisOpts(name=y_label),
+        )
+        .set_series_opts(label_opts=opts.LabelOpts(is_show=False))
+    )
+
+    # 使用 snapshot_selenium 库生成静态图像
+    make_snapshot(snapshot, bar_chart.render(), "bar.png", pixel_ratio=2)
+
+    # 将生成的静态图像转换为 NumPy 数组
+    pil_img = Image.open("bar.png")
+    image = np.array(pil_img)
+
     return image
 
-def generate_pie_chart(data, num,font_prop=None):
+def generate_pie_chart(data, num, font_prop=None):
     labels = data['Word']
     sizes = data['Frequency']
     colors = ['blue', 'green', 'red', 'purple', 'orange']  # 根据你的数据量调整颜色数量
-    fig, ax = plt.subplots()
-    ax.axis('equal')
-    plt.title('扇形图')
-    dev_position = [0.1] * num
-    plt.pie(sizes,
-            labels=labels,
-            wedgeprops={'width': 0.7},
-            colors=colors,
-            autopct='%1.1f%%',
-            shadow=True,
-            startangle=50,
-            explode=dev_position,
-            labeldistance=1,
-            radius=1.5,
-            pctdistance=0.8)
-    plt.axis('equal')
-    fig.canvas.draw()
-    image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
-    image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+
+    # Create Pyecharts pie chart
+    pie_chart = (
+        Pie()
+        .add(
+            "",
+            [list(z) for z in zip(labels, sizes)],
+            radius=["30%", "75%"],
+            center=["50%", "50%"],
+            rosetype="radius",
+            label_opts=opts.LabelOpts(is_show=False),
+            itemstyle_opts={"normal": {"color": lambda params: colors[params.data_index % len(colors)]}},
+        )
+        .set_global_opts(title_opts=opts.TitleOpts(title="扇形图"))
+        .set_series_opts(label_opts=opts.LabelOpts(formatter="{b}: {c}"))
+    )
+
+    # Render the chart and save it as an image
+    pie_chart.render("pie_chart.html")
+    driver.snapshot(pie_chart.render(), "pie_chart.png")  # This line converts the chart to an image
+
+    # Read the image and return it
+    image = plt.imread("pie_chart.png")
     return image
 
-def generate_scatter_plot(data,font_prop=None):
-    plt.scatter(data['Word'], data['Frequency'], color='#567834')
-    plt.xticks(rotation=45)  # 将标签旋转45度
-    plt.title('散点图')
-    plt.xlabel('x')
-    plt.ylabel('y')
-    fig = plt.gcf()  # 获取当前图形对象
-    fig.canvas.draw()  # 绘制图形
-    image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
-    image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+def generate_scatter_plot(data, font_prop=None):
+    x_data = data['Word']
+    y_data = data['Frequency']
+
+    scatter_chart = (
+        Scatter()
+        .add_xaxis(x_data)
+        .add_yaxis("Scatter", y_data, symbol_size=10, color="#567834")
+        .set_global_opts(
+            title_opts=opts.TitleOpts(title="散点图"),
+            xaxis_opts=opts.AxisOpts(type_="category", axislabel_opts={"rotate": 45}),
+            yaxis_opts=opts.AxisOpts(type_="value"),
+        )
+    )
+
+    scatter_chart.render("scatter_chart.html")
+
+    # Now you have saved the scatter chart as an image
+    image = plt.imread("scatter_chart.png")
     return image
 
-def generate_line_plot(data,font_prop=None):
-    plt.plot(data['Word'], data['Frequency'], color='red')
-    plt.xticks(rotation=45)  # 将标签旋转45度
-    plt.title('折线图')
-    plt.xlabel('x')
-    plt.ylabel('y')
+def generate_line_plot(data, font_prop=None):
+    x_data = data['Word']
+    y_data = data['Frequency']
 
-    fig = plt.gcf()  # 获取当前图形对象
-    fig.canvas.draw()  # 绘制图形
-    image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
-    image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+    line_chart = (
+        Line()
+        .add_xaxis(x_data)
+        .add_yaxis("Line", y_data, symbol="circle", is_smooth=True, color="red", label_opts=opts.LabelOpts(is_show=False))
+        .set_global_opts(
+            title_opts=opts.TitleOpts(title="折线图"),
+            xaxis_opts=opts.AxisOpts(type_="category", axislabel_opts={"rotate": 45}),
+            yaxis_opts=opts.AxisOpts(type_="value"),
+        )
+    )
+
+    line_chart.render("line_chart.html")
+
+    # Now you have saved the line chart as an image
+    image = plt.imread("line_chart.png")
+    return image
+def generate_area_chart(data, font_prop=None):
+    x_data = data['Word']
+    y_data = data['Frequency']
+
+    line_chart = (
+        Line()
+        .add_xaxis(x_data)
+        .add_yaxis("Area", y_data, areastyle_opts=opts.AreaStyleOpts(opacity=0.5, color="#345678"), label_opts=opts.LabelOpts(is_show=False))
+        .set_global_opts(
+            title_opts=opts.TitleOpts(title="面积图"),
+            xaxis_opts=opts.AxisOpts(type_="category", axislabel_opts={"rotate": 45}),
+            yaxis_opts=opts.AxisOpts(type_="value"),
+        )
+    )
+
+    line_chart.render("area_chart.html")
+
+    # Now you have saved the area chart as an image
+    image = plt.imread("area_chart.png")
     return image
 
-def generate_area_chart(data,font_prop=None):
-    plt.fill_between(data['Word'], data['Frequency'], color='#345678')
-    plt.xticks(rotation=45)
-    plt.title('面积图')
-    plt.xlabel('Word')
-    plt.ylabel('Frequency')
-    fig = plt.gcf()
-    fig.canvas.draw()
-    image = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
-    image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
-    return fig, image
 
 
 def generate_histogram(data):
