@@ -1,3 +1,4 @@
+import numpy as np
 import requests
 from collections import Counter
 import streamlit as st
@@ -6,16 +7,15 @@ import matplotlib.pyplot as plt
 import jieba
 from bs4 import BeautifulSoup
 from wordcloud import WordCloud
+from pyecharts.charts import Bar, Line, Scatter
 from pyecharts import options as opts
-from pyecharts.charts import Bar
 from pyecharts.render import make_snapshot
-from snapshot_selenium import snapshot
-import numpy as np
 from PIL import Image
 from pyecharts.charts import Pie
 from snapshot_selenium import snapshot as driver
-from pyecharts.charts import Scatter
-from pyecharts.charts import Line
+import plotly.graph_objects as go
+# 设置仿宋字体路径（替换为你本地的仿宋字体路径）
+font_path = '仿宋_GB2312.ttf'
 
 def main():
     # 使用 Streamlit 构建界面
@@ -68,48 +68,118 @@ def main():
         # 创建侧边栏
         st.sidebar.title('选择图像')
         # 创建复选框，包含7种图形的选项
-        graph_options = ['直方图', '扇形图', '折线图', '散点图', '条形图', '面积图']
+        graph_options = ['直方图', '扇形图', '折线图', '散点图', '条形图', '面积图','瀑布图']
         selected_graphs = st.sidebar.selectbox('选择图像', graph_options)
         plt.figure(figsize=(15, 9))
 
-        # 绘制条形图
         if '条形图' in selected_graphs:
-            chart_image = create_bar_chart(top_20_data, '条形图', 'Word', 'Frequency')
-            st.sidebar.image(chart_image, caption='条形图')
+            chart = go.Figure()
+            chart.add_trace(go.Bar(x=top_20_data['Word'], y=top_20_data['Frequency']))
+            chart.update_layout(
+                title="条形图",
+                xaxis=dict(title="Word"),
+                yaxis=dict(title="Frequency")
+            )
+        elif '折线图' in selected_graphs:
+            chart = go.Figure()
+            chart.add_trace(go.Scatter(x=top_20_data['Word'], y=top_20_data['Frequency'], mode='lines'))
+            chart.update_layout(
+                title="折线图",
+                xaxis=dict(title="Word"),
+                yaxis=dict(title="Frequency")
+            )
+        elif '散点图' in selected_graphs:
+            # 创建散点图
+            chart = go.Figure()
+
+            # 添加散点
+            chart.add_trace(go.Scatter(
+                x=top_20_data['Word'],  # x轴数据
+                y=top_20_data['Frequency'],  # y轴数据
+                mode='markers',  # 散点图模式
+                marker=dict(
+                    size=10,  # 散点大小
+                    color='blue',  # 散点颜色
+                    opacity=0.7,  # 散点透明度
+                    symbol='circle'  # 散点形状
+                ),
+                text=top_20_data['Word'],  # 鼠标悬停时显示的文本
+                name='Top 20 Data'  # 图例名称
+            ))
+
+            # 更新布局
+            chart.update_layout(
+                title="散点图",
+                xaxis=dict(title="Word"),
+                yaxis=dict(title="Frequency")
+            )
+
+        elif '面积图' in selected_graphs:
+            chart = go.Figure()
+            chart.add_trace(
+                go.Scatter(x=top_20_data['Word'], y=top_20_data['Frequency'], fill='tozeroy', fillcolor='yellow', line=dict(color='red', width=2)))
+            chart.update_layout(
+                title="面积图",
+                xaxis=dict(title="Word"),
+                yaxis=dict(title="Frequency")
+            )
+
+
+        elif '瀑布图' in selected_graphs:
+            # 获取 top_20_data['Word'] 数据
+            words = top_20_data['Word']
+
+            # 为每个词生成随机颜色
+            marker_colors = [generate_random_color() for _ in words]
+
+            # 计算瀑布图的累计值
+            cumulative_y = [sum(top_20_data['Frequency'][:i + 1]) for i in range(len(top_20_data['Frequency']))]
+
+            # 创建瀑布图，并使用随机颜色
+            chart = go.Figure(go.Bar(x=top_20_data['Word'], y=cumulative_y, marker_color=marker_colors))
+
+            # 更新布局
+            chart.update_layout(title='Waterfall Chart', xaxis_title='Word', yaxis_title='Cumulative Frequency')
+
+            # 显示图表
+
 
         # 扇形图
         if '扇形图' in selected_graphs:
-            pie_chart_image = generate_pie_chart(top_20_data, num=len(top_20_data))
-            # 在Streamlit侧边栏显示图片
-            st.sidebar.image(pie_chart_image, caption='扇形图')
+            # 创建扇形图
+            chart = go.Figure()
 
-        # 散点图
-        if '散点图' in selected_graphs:
-            scatter_plot_image = generate_scatter_plot(top_20_data)
-            # 在Streamlit应用中显示图片
-            st.sidebar.image(scatter_plot_image, caption='散点图')
+            # 添加扇形图数据
+            chart.add_trace(go.Pie(
+                labels=top_20_data['Word'],  # 扇形图标签
+                values=top_20_data['Frequency'],  # 扇形图对应的值
+                hole=0.3,  # 中间留空的大小，0表示没有留空
+                pull=[0.1]*num,  # 通过调整这个参数，可以突出某个扇形
+                textinfo='label+percent',  # 鼠标悬停时显示的信息，这里显示标签和百分比
+            ))
 
-        # 绘制折线图
-        if '折线图' in selected_graphs:
-            line_plot_image = generate_line_plot(top_20_data)
-            # 在Streamlit侧边栏显示图片
-            st.sidebar.image(line_plot_image, caption='折线图')
+            # 更新布局
+            chart.update_layout(
+                title="扇形图"
+            )
 
-        #条形图
+
         if '直方图' in selected_graphs:
-            histogram_fig = generate_histogram(top_20_data['Frequency'])
+            chart = generate_histogram(top_20_data['Frequency'])
             # 在Streamlit侧边栏显示直方图
-            st.sidebar.pyplot(histogram_fig)
 
-        #面积图
-        if '面积图' in selected_graphs:
-            area_fig, area_image = generate_area_chart(top_20_data)
-            # 在Streamlit应用的侧边栏中显示面积图
-            st.sidebar.image(area_image, caption='面积图')
-
+        st.sidebar.plotly_chart(chart)
     else:
         error = '请输入正确的url'
         st.text(error)
+
+
+
+# 生成随机颜色
+def generate_random_color():
+    return f'rgba({np.random.rand()}, {np.random.rand()}, {np.random.rand()}, 1)'
+
+
 def crawl_data(url):
     # 发送GET请求并获取响应
     headers = {
@@ -129,122 +199,6 @@ def crawl_data(url):
     # 获取DIV中的文本内容
     content = soup.get_text()
     return content
-
-def create_bar_chart_pyecharts(data, title, x_label, y_label, rotation=45, color='blue'):
-    # 创建 Pyecharts 的 Bar 图
-    bar_chart = (
-        Bar()
-        .add_xaxis(data['Word'].tolist())
-        .add_yaxis("", data['Frequency'].tolist(), color=color)
-        .set_global_opts(
-            title_opts=opts.TitleOpts(title=title),
-            xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(rotate=rotation)),
-            yaxis_opts=opts.AxisOpts(name=y_label),
-        )
-        .set_series_opts(label_opts=opts.LabelOpts(is_show=False))
-    )
-
-    # 使用 snapshot_selenium 库生成静态图像
-    make_snapshot(snapshot, bar_chart.render(), "bar.png", pixel_ratio=2)
-
-    # 将生成的静态图像转换为 NumPy 数组
-    pil_img = Image.open("bar.png")
-    image = np.array(pil_img)
-
-    return image
-
-def generate_pie_chart(data, num, font_prop=None):
-    labels = data['Word']
-    sizes = data['Frequency']
-    colors = ['blue', 'green', 'red', 'purple', 'orange']  # 根据你的数据量调整颜色数量
-
-    # Create Pyecharts pie chart
-    pie_chart = (
-        Pie()
-        .add(
-            "",
-            [list(z) for z in zip(labels, sizes)],
-            radius=["30%", "75%"],
-            center=["50%", "50%"],
-            rosetype="radius",
-            label_opts=opts.LabelOpts(is_show=False),
-            itemstyle_opts={"normal": {"color": lambda params: colors[params.data_index % len(colors)]}},
-        )
-        .set_global_opts(title_opts=opts.TitleOpts(title="扇形图"))
-        .set_series_opts(label_opts=opts.LabelOpts(formatter="{b}: {c}"))
-    )
-
-    # Render the chart and save it as an image
-    pie_chart.render("pie_chart.html")
-    driver.snapshot(pie_chart.render(), "pie_chart.png")  # This line converts the chart to an image
-
-    # Read the image and return it
-    image = plt.imread("pie_chart.png")
-    return image
-
-def generate_scatter_plot(data, font_prop=None):
-    x_data = data['Word']
-    y_data = data['Frequency']
-
-    scatter_chart = (
-        Scatter()
-        .add_xaxis(x_data)
-        .add_yaxis("Scatter", y_data, symbol_size=10, color="#567834")
-        .set_global_opts(
-            title_opts=opts.TitleOpts(title="散点图"),
-            xaxis_opts=opts.AxisOpts(type_="category", axislabel_opts={"rotate": 45}),
-            yaxis_opts=opts.AxisOpts(type_="value"),
-        )
-    )
-
-    scatter_chart.render("scatter_chart.html")
-
-    # Now you have saved the scatter chart as an image
-    image = plt.imread("scatter_chart.png")
-    return image
-
-def generate_line_plot(data, font_prop=None):
-    x_data = data['Word']
-    y_data = data['Frequency']
-
-    line_chart = (
-        Line()
-        .add_xaxis(x_data)
-        .add_yaxis("Line", y_data, symbol="circle", is_smooth=True, color="red", label_opts=opts.LabelOpts(is_show=False))
-        .set_global_opts(
-            title_opts=opts.TitleOpts(title="折线图"),
-            xaxis_opts=opts.AxisOpts(type_="category", axislabel_opts={"rotate": 45}),
-            yaxis_opts=opts.AxisOpts(type_="value"),
-        )
-    )
-
-    line_chart.render("line_chart.html")
-
-    # Now you have saved the line chart as an image
-    image = plt.imread("line_chart.png")
-    return image
-def generate_area_chart(data, font_prop=None):
-    x_data = data['Word']
-    y_data = data['Frequency']
-
-    line_chart = (
-        Line()
-        .add_xaxis(x_data)
-        .add_yaxis("Area", y_data, areastyle_opts=opts.AreaStyleOpts(opacity=0.5, color="#345678"), label_opts=opts.LabelOpts(is_show=False))
-        .set_global_opts(
-            title_opts=opts.TitleOpts(title="面积图"),
-            xaxis_opts=opts.AxisOpts(type_="category", axislabel_opts={"rotate": 45}),
-            yaxis_opts=opts.AxisOpts(type_="value"),
-        )
-    )
-
-    line_chart.render("area_chart.html")
-
-    # Now you have saved the area chart as an image
-    image = plt.imread("area_chart.png")
-    return image
-
-
 
 def generate_histogram(data):
     plt.hist(data, bins=max(data), color='red', alpha=0.5)
