@@ -20,7 +20,7 @@ def main():
     # 执行爬虫逻辑并获取数据
     if url:
         data = crawl_data(url)
-        data_utf8 = data.encode('utf-8')  # 如果data已经是字符串，这一步不是必需的
+        data_utf8 = data.encode('utf-8')
         # 对内容进行分词
         words =  jieba.lcut_for_search(data_utf8)
         # st.text(words)
@@ -41,31 +41,11 @@ def main():
         top_20_data = df.head(num)
         st.dataframe(top_20_data)
 
-        #词云
-        text = ' '.join(top_20_data['Word'])
-        wordcloud = WordCloud(width=800,
-                  height=400,
-                  background_color='white',
-                  font_path='仿宋_GB2312.ttf',  # 设置中文字体
-                  colormap='viridis',  # 设置颜色映射
-                  contour_width=1,
-                  contour_color='steelblue',  # 设置轮廓颜色
-                  max_words=100,  # 最大显示词数
-                  max_font_size=80,  # 最大字体大小
-                  random_state=42  # 随机状态，以确保每次生成相同的词云
-                  ).generate(text)
-        # 显示词云
-        # 将词云图像转换为Pillow图像
-        wordcloud_image = Image.fromarray(wordcloud.to_array())
-        # 使用streamlit显示图像
-        st.image(wordcloud_image)
-
         # 创建侧边栏
         st.sidebar.title('选择图像')
         # 创建复选框，包含7种图形的选项
-        graph_options = ['直方图', '扇形图', '折线图', '散点图', '条形图', '面积图','瀑布图']
+        graph_options = ['直方图', '扇形图', '折线图', '散点图', '条形图', '面积图','瀑布图', '词云图']
         selected_graphs = st.sidebar.selectbox('选择图像', graph_options)
-        #
 
         if '条形图' in selected_graphs:
             chart = go.Figure()
@@ -155,8 +135,27 @@ def main():
             chart = generate_histogram(top_20_data['Frequency'])
             # 在Streamlit侧边栏显示直方图
 
-
         st.plotly_chart(chart)
+        
+        if '词云图' in selected_graphs:
+            # 词云
+            text = ' '.join(top_20_data['Word'])
+            wordcloud = WordCloud(width=800,
+                                  height=400,
+                                  background_color='white',
+                                  font_path='仿宋_GB2312.ttf',  # 设置中文字体
+                                  colormap='viridis',  # 设置颜色映射
+                                  contour_width=1,
+                                  contour_color='steelblue',  # 设置轮廓颜色
+                                  max_words=100,  # 最大显示词数
+                                  max_font_size=80,  # 最大字体大小
+                                  random_state=42  # 随机状态，以确保每次生成相同的词云
+                                  ).generate(text)
+            # 显示词云
+            # 将词云图像转换为Pillow图像
+            wordcloud_image = Image.fromarray(wordcloud.to_array())
+            # 使用streamlit显示图像
+            st.image(wordcloud_image)
     else:
         error = '请输入正确的url'
         st.text(error)
