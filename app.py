@@ -46,6 +46,7 @@ def main():
         # 创建复选框，包含7种图形的选项
         graph_options = ['直方图', '扇形图', '折线图', '散点图', '条形图', '面积图','瀑布图', '词云图']
         selected_graphs = st.sidebar.selectbox('选择图像', graph_options)
+        chart = ''
 
         if '条形图' in selected_graphs:
             chart = go.Figure()
@@ -134,9 +135,9 @@ def main():
             plt.figure(figsize=(8, 4))
             chart = generate_histogram(top_20_data['Frequency'])
             # 在Streamlit侧边栏显示直方图
+        if chart:
+            st.plotly_chart(chart)
 
-        st.plotly_chart(chart)
-        
         if '词云图' in selected_graphs:
             # 词云
             text = ' '.join(top_20_data['Word'])
