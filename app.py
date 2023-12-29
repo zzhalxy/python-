@@ -18,7 +18,7 @@ def main():
     # 输入要爬取的网页 URL
     url = st.text_input('请输入要爬取的网页 URL')
     # 执行爬虫逻辑并获取数据
-    if url != '':
+    if url:
         data = crawl_data(url)
         data_utf8 = data.encode('utf-8')  # 如果data已经是字符串，这一步不是必需的
         # 对内容进行分词
@@ -65,7 +65,7 @@ def main():
         # 创建复选框，包含7种图形的选项
         graph_options = ['直方图', '扇形图', '折线图', '散点图', '条形图', '面积图','瀑布图']
         selected_graphs = st.sidebar.selectbox('选择图像', graph_options)
-        plt.figure(figsize=(15, 9))
+        #
 
         if '条形图' in selected_graphs:
             chart = go.Figure()
@@ -75,6 +75,7 @@ def main():
                 xaxis=dict(title="Word"),
                 yaxis=dict(title="Frequency")
             )
+            chart.update_layout(width=800, height=400)
         elif '折线图' in selected_graphs:
             chart = go.Figure()
             chart.add_trace(go.Scatter(x=top_20_data['Word'], y=top_20_data['Frequency'], mode='lines'))
@@ -83,6 +84,7 @@ def main():
                 xaxis=dict(title="Word"),
                 yaxis=dict(title="Frequency")
             )
+            chart.update_layout(width=800, height=400)
         elif '散点图' in selected_graphs:
             # 创建散点图
             chart = go.Figure()
@@ -107,6 +109,7 @@ def main():
                 xaxis=dict(title="Word"),
                 yaxis=dict(title="Frequency")
             )
+            chart.update_layout(width=800, height=400)
         elif '面积图' in selected_graphs:
             chart = go.Figure()
             chart.add_trace(
@@ -116,6 +119,7 @@ def main():
                 xaxis=dict(title="Word"),
                 yaxis=dict(title="Frequency")
             )
+            chart.update_layout(width=800, height=400)
         elif '瀑布图' in selected_graphs:
             # 获取 top_20_data['Word'] 数据
             words = top_20_data['Word']
@@ -126,8 +130,9 @@ def main():
             # 创建瀑布图，并使用随机颜色
             chart = go.Figure(go.Bar(x=top_20_data['Word'], y=cumulative_y, marker_color=marker_colors))
             # 更新布局
-            chart.update_layout(title='Waterfall Chart', xaxis_title='Word', yaxis_title='Cumulative Frequency')
+            chart.update_layout(title='瀑布图', xaxis_title='Word', yaxis_title='累计频率')
             # 显示图表
+            chart.update_layout(width=800, height=400)
         # 扇形图
         elif '扇形图' in selected_graphs:
             # 创建扇形图
@@ -141,14 +146,17 @@ def main():
                 textinfo='label+percent',  # 鼠标悬停时显示的信息，这里显示标签和百分比
             ))
             # 更新布局
+            chart.update_layout(width=800, height=400)
             chart.update_layout(
                 title="扇形图"
             )
         elif '直方图' in selected_graphs:
+            plt.figure(figsize=(8, 4))
             chart = generate_histogram(top_20_data['Frequency'])
             # 在Streamlit侧边栏显示直方图
 
-        st.sidebar.plotly_chart(chart)
+
+        st.plotly_chart(chart)
     else:
         error = '请输入正确的url'
         st.text(error)
